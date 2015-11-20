@@ -21,7 +21,7 @@
         </dependency>
         <dependency>
             <groupId>org.tendiwa</groupId>
-            <artifactId>geometry</artifactId>
+            <artifactId>plane-geometry</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
     </dependencies>
