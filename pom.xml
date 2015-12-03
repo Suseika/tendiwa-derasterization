@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
+    <modules>
+        <module>../plane-derasterization-debug</module>
+    </modules>
     <parent>
         <groupId>org.tendiwa</groupId>
         <artifactId>parent</artifactId>
@@ -8,7 +11,7 @@
     </parent>
     <artifactId>plane-derasterization</artifactId>
     <version>1.0-SNAPSHOT</version>
-    <packaging>jar</packaging>
+    <packaging>pom</packaging>
 
     <name>tendiwa-plane-derasterization</name>
     <description>De-rasterization algorithms to transform grid masks to 2d geometry</description>
@@ -22,6 +25,16 @@
         <dependency>
             <groupId>org.tendiwa</groupId>
             <artifactId>plane-geometry</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>org.tendiwa</groupId>
+            <artifactId>plane-grid-algorithms</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>org.tendiwa</groupId>
+            <artifactId>plane-geometry-graphs</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
     </dependencies>
