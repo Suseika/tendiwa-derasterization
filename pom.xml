@@ -8,7 +8,7 @@
     </parent>
     <artifactId>plane-derasterization</artifactId>
     <version>1.0-SNAPSHOT</version>
-    <packaging>pom</packaging>
+    <packaging>jar</packaging>
 
     <name>tendiwa-plane-derasterization</name>
     <description>De-rasterization algorithms to transform grid masks to 2d geometry</description>
