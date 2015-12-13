@@ -1,6 +1,6 @@
 package org.tendiwa.derasterization.polygons
 
-import org.tendiwa.derasterization.point
+import org.tendiwa.derasterization.toPoint
 import org.tendiwa.graphs.neighbors.neighborsOf
 import org.tendiwa.graphs.trails.trail
 import org.tendiwa.graphs.vertices
@@ -42,7 +42,7 @@ val BoundedGridMask.derasterized: Set<Polygon>
 
 private fun segmentsBetweenNeighbors(tiles: Iterable<Tile>): List<Segment> =
     tiles
-        .map { Pair(it, it.point) }
+        .map { Pair(it, it.toPoint()) }
         .apply { assert(all { it.second.x.isInteger || it.second.y.isInteger }) }
         .toMap()
         .let { tilesToPoints ->
