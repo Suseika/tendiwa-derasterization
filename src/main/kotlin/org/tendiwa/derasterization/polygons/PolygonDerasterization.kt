@@ -8,8 +8,9 @@ import org.tendiwa.math.doubles.isInteger
 import org.tendiwa.plane.directions.CardinalDirection.E
 import org.tendiwa.plane.directions.CardinalDirection.S
 import org.tendiwa.plane.geometry.graphs.Graph2D
-import org.tendiwa.plane.geometry.graphs.algorithms.minimumCycleBasis.minimumCycleBasis
+import org.tendiwa.plane.geometry.graphs.asCycles
 import org.tendiwa.plane.geometry.graphs.constructors.Graph2D
+import org.tendiwa.plane.geometry.graphs.toPolygon
 import org.tendiwa.plane.geometry.points.Point
 import org.tendiwa.plane.geometry.polygons.Polygon
 import org.tendiwa.plane.geometry.segments.Segment
@@ -37,8 +38,9 @@ val BoundedGridMask.derasterized: Set<Polygon>
         .run(::segmentsBetweenNeighbors)
         .run(::Graph2D)
         .withConsecutiveEdgesCollapsed
-        .minimumCycleBasis
-        .minimalCycles
+        .asCycles()
+        .map { it.toPolygon() }
+        .toSet()
 
 private fun segmentsBetweenNeighbors(tiles: Iterable<Tile>): List<Segment> =
     tiles
