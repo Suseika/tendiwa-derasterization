@@ -1,7 +1,7 @@
 package org.tendiwa.derasterization.polygons
 
+import org.tendiwa.collections.untilDepleted
 import org.tendiwa.derasterization.toPoint
-import org.tendiwa.graphs.neighbors.neighborsOf
 import org.tendiwa.graphs.trails.trail
 import org.tendiwa.graphs.vertices
 import org.tendiwa.math.doubles.isInteger
@@ -24,6 +24,7 @@ import org.tendiwa.plane.grid.masks.difference
 import org.tendiwa.plane.grid.metrics.GridMetric.TAXICAB
 import org.tendiwa.plane.grid.tiles.Tile
 import org.tendiwa.plane.grid.tiles.neighbors
+import java.util.*
 
 val BoundedGridMask.derasterized: Set<Polygon>
     get() =
@@ -37,9 +38,12 @@ val BoundedGridMask.derasterized: Set<Polygon>
         .flatMap { it.tiles }
         .run(::segmentsBetweenNeighbors)
         .run(::Graph2D)
-        .withConsecutiveEdgesCollapsed
+        .collapseConsecutiveEdges()
+        .apply { assert(true) }
         .asCycles()
+        .apply { assert(true) }
         .map { it.toPolygon() }
+        .apply { assert(true) }
         .toSet()
 
 private fun segmentsBetweenNeighbors(tiles: Iterable<Tile>): List<Segment> =
@@ -63,24 +67,21 @@ private fun segmentsBetweenNeighbors(tiles: Iterable<Tile>): List<Segment> =
                 }
         }
 
-private val Graph2D.withConsecutiveEdgesCollapsed: Graph2D
-    get() {
-        val remainingVertices = vertices
-            .filter { !hasCollapseableEdges(it) }
-            .toSet()
-        return vertices
-            .first()
-            .let { anyVertex ->
-                trail(
-                    start = anyVertex,
-                    past = neighborsOf(anyVertex).first()
-                )
-            }
+private fun Graph2D.collapseConsecutiveEdges(): Graph2D {
+    val remainingVertices = vertices
+        .filter { !hasCollapseableEdges(it) }
+        .toSet()
+    val connectivityComponents = LinkedHashSet<Polygon>()
+    remainingVertices.untilDepleted {
+        trail(start = it)
             .map { it.payload }
             .filter { it in remainingVertices }
-            .run { Graph2D(Polygon(this)) }
+            .apply { assert(true) }
+            .apply { forEach { markUsed(it) } }
+            .apply { connectivityComponents.add(Polygon(this)) }
     }
+    return Graph2D(connectivityComponents)
+}
 
 private fun Graph2D.hasCollapseableEdges(vertex: Point): Boolean =
     edgesOf(vertex).map { it.slope }.distinct().size == 1
-
