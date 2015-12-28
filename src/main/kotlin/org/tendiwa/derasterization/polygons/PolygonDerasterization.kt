@@ -10,7 +10,7 @@ import org.tendiwa.plane.directions.CardinalDirection.S
 import org.tendiwa.plane.geometry.graphs.Graph2D
 import org.tendiwa.plane.geometry.graphs.asCycles
 import org.tendiwa.plane.geometry.graphs.constructors.Graph2D
-import org.tendiwa.plane.geometry.graphs.toPolygon
+import org.tendiwa.plane.geometry.graphs.cycles.toPolygon
 import org.tendiwa.plane.geometry.points.Point
 import org.tendiwa.plane.geometry.polygons.Polygon
 import org.tendiwa.plane.geometry.segments.Segment
