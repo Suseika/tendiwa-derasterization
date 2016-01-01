@@ -9,10 +9,13 @@ import org.tendiwa.plane.directions.CardinalDirection.E
 import org.tendiwa.plane.directions.CardinalDirection.S
 import org.tendiwa.plane.geometry.graphs.Graph2D
 import org.tendiwa.plane.geometry.graphs.constructors.Graph2D
+import org.tendiwa.plane.geometry.graphs.cycles.Cycle2D
 import org.tendiwa.plane.geometry.graphs.cycles.toPolygon
 import org.tendiwa.plane.geometry.graphs.toDisconnectedCycles
+import org.tendiwa.plane.geometry.holeygons.Holeygon
 import org.tendiwa.plane.geometry.points.Point
 import org.tendiwa.plane.geometry.polygons.Polygon
+import org.tendiwa.plane.geometry.polygons.contains
 import org.tendiwa.plane.geometry.segments.Segment
 import org.tendiwa.plane.geometry.segments.slope
 import org.tendiwa.plane.grid.algorithms.buffers.inwardBuffer
@@ -26,7 +29,7 @@ import org.tendiwa.plane.grid.tiles.Tile
 import org.tendiwa.plane.grid.tiles.neighbors
 import java.util.*
 
-val BoundedGridMask.derasterized: Set<Polygon>
+val BoundedGridMask.derasterized: Collection<Holeygon>
     get() =
     connectivityComponents(metric = TAXICAB)
         .map { component ->
@@ -40,8 +43,34 @@ val BoundedGridMask.derasterized: Set<Polygon>
         .run(::Graph2D)
         .collapseConsecutiveEdges()
         .toDisconnectedCycles()
-        .map { it.toPolygon() }
-        .toSet()
+        .map(Cycle2D::toPolygon)
+        .let { polygons ->
+            object {
+                val holeygons =
+                    polygons.map {
+                        holeygon(enclosing = it, candidates = polygons)
+                    }
+
+                val notHoles =
+                    holeygons
+                        .flatMap { it.holes }
+                        .toSet()
+                        .let { holes ->
+                            holeygons.filter { !holes.contains(it.enclosing) }
+                        }
+            }
+        }
+        .notHoles
+
+private fun holeygon(
+    enclosing: Polygon,
+    candidates: Collection<Polygon>
+): Holeygon =
+    Holeygon(
+        enclosing,
+        candidates
+            .filter { enclosing != it && enclosing.contains(it.points.first()) }
+    )
 
 private fun segmentsBetweenNeighbors(tiles: Iterable<Tile>): List<Segment> =
     tiles

@@ -1,8 +1,7 @@
 package org.tendiwa.derasterization.polygons
 
 import org.junit.Test
-import org.tendiwa.graphs.edges
-import org.tendiwa.plane.geometry.graphs.constructors.Graph2D
+import org.tendiwa.plane.geometry.segments.Segment
 import org.tendiwa.plane.grid.constructors.GridRectangle
 import org.tendiwa.plane.grid.dimensions.by
 import org.tendiwa.plane.grid.masks.*
@@ -14,6 +13,7 @@ class PolygonDerasterizationTest {
         GridRectangle(10 by 10)
             .derasterized
             .first()
+            .enclosing
             .apply { assertEquals(4, segments.size) }
     }
 
@@ -54,10 +54,52 @@ class PolygonDerasterizationTest {
                 ".####.....",
                 ".........."
             )
+        val edgesOf: (StringGridMask) -> Set<Segment> = {
+            it.derasterized
+                .map { it.enclosing }
+                .flatMap { it.segments }
+                .toSet()
+        }
         assertEquals(
-            Graph2D(simplified.derasterized).edges,
-            Graph2D(complex.derasterized).edges
+            edgesOf(simplified),
+            edgesOf(complex)
         )
+    }
+
+    @Test
+    fun derasterizesPolygonWithHoles() {
+        StringGridMask(
+            "..#######.",
+            ".########.",
+            ".########.",
+            ".####.###.",
+            ".###..####",
+            ".#########",
+            ".#########",
+            ".#########",
+            ".####.....",
+            ".........."
+        )
+            .derasterized
+            .apply { assertEquals(1, size) }
+            .first()
+            .apply { assertEquals(1, holes.size) }
+    }
+
+    @Test
+    fun derasterizesMultiplePolygonsWithHoles() {
+        StringGridMask(
+            "#######..##############...",
+            "#######..##############...",
+            "#######..##############...",
+            "###.###..###.######.###...",
+            "#######..##############...",
+            "#######..##############...",
+            "#######..##############..."
+        )
+            .derasterized
+            .apply { assertEquals(2, size) }
+            .apply { assertEquals(3, flatMap { it.holes }.size) }
     }
 
     @Test fun derasterizesEmptyMask() {
