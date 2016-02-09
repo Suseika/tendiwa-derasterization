@@ -29,8 +29,7 @@ import org.tendiwa.plane.grid.tiles.Tile
 import org.tendiwa.plane.grid.tiles.neighbors
 import java.util.*
 
-val BoundedGridMask.derasterized: Collection<Holeygon>
-    get() =
+fun BoundedGridMask.derasterized(): Collection<Holeygon> =
     connectivityComponents(metric = TAXICAB)
         .map { component ->
             component

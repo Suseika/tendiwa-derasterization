@@ -11,7 +11,7 @@ import kotlin.test.assertEquals
 class PolygonDerasterizationTest {
     @Test fun collapsesContinuousEdgeChains() {
         GridRectangle(10 by 10)
-            .derasterized
+            .derasterized()
             .first()
             .enclosing
             .apply { assertEquals(4, segments.size) }
@@ -23,7 +23,7 @@ class PolygonDerasterizationTest {
         component1
             .union(component2)
             .boundedBy(GridRectangularHull(component1, component2))
-            .derasterized
+            .derasterized()
             .apply { assertEquals(2, size) }
     }
 
@@ -55,7 +55,7 @@ class PolygonDerasterizationTest {
                 ".........."
             )
         val edgesOf: (StringGridMask) -> Set<Segment> = {
-            it.derasterized
+            it.derasterized()
                 .map { it.enclosing }
                 .flatMap { it.segments }
                 .toSet()
@@ -80,7 +80,7 @@ class PolygonDerasterizationTest {
             ".####.....",
             ".........."
         )
-            .derasterized
+            .derasterized()
             .apply { assertEquals(1, size) }
             .first()
             .apply { assertEquals(1, holes.size) }
@@ -97,7 +97,7 @@ class PolygonDerasterizationTest {
             "#######..##############...",
             "#######..##############..."
         )
-            .derasterized
+            .derasterized()
             .apply { assertEquals(2, size) }
             .apply { assertEquals(3, flatMap { it.holes }.size) }
     }
@@ -105,7 +105,7 @@ class PolygonDerasterizationTest {
     @Test fun derasterizesEmptyMask() {
         EmptyGridMask()
             .boundedBy(GridRectangle(3 by 4))
-            .derasterized
+            .derasterized()
             .apply { assertEquals(0, size) }
     }
 }
